@@ -1,5 +1,5 @@
-include("jquery")
-include("https://gist.githubusercontent.com/jabney/d9d5c13ad7f871ddf03f/raw/99b13e7721f8a50ef8b0c1e9c015eca9fb6e9e8f/setOps.js")
+//include("jquery")
+//include("https://gist.githubusercontent.com/jabney/d9d5c13ad7f871ddf03f/raw/99b13e7721f8a50ef8b0c1e9c015eca9fb6e9e8f/setOps.js")
 
 var addBin = function(ul) {
 
