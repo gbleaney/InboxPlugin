@@ -35,8 +35,11 @@ var addBin = function(ul) {
 	console.debug("Updating bin action to trash");
 	bin.attr("jsaction", "click:global.trash");
 
-	console.debug("Adding (possibly invalid) 'jsinstance'");
+	console.debug("Adding (possibly invalid) 'jsinstance'"); // TODO: figure out what jsinstance really means 
 	bin.attr("jsinstance", "4");
+
+	console.debug("Adding (possibly invalid) 'jsinstance'");
+	bin.attr("title", "Move to the Bin");
 
 
 	console.debug("Finding done icon to change to bin");
@@ -57,24 +60,22 @@ var addBin = function(ul) {
 	console.debug(action_list.get());
 }
 
-
-//var trash = container.find('div div li[data-jsaction="global.trash"]').clone()
-//var trash_icon = $(trash.find("div img"))
-
-var targets = $(".scroll-list-item").get();
-for(idx in targets) {
-	target = targets[idx];
+var addObserverToListItem = function(target) {
 	// From: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
 	// create an observer instance
 	var observer = new MutationObserver(function(mutations) {
 	  mutations.forEach(function(mutation) {
 	  	for (var i = 0; i < mutation.addedNodes.length; i++) {
 	  		var addedNode = mutation.addedNodes[i];
+	  		var addedNodeJq = $(addedNode);
 	  		console.log("Processing:");
 	  		console.log(addedNode);
 	  		if (addedNode.tagName == "UL") {
-	  			console.log("Calling addBin");
+	  			console.log("Calling addBin for mouseover of email or reminder");
 	  			addBin(addedNode);
+	  		} else if (addedNode.tagName == "DIV" && addedNodeJq.attr("role") == "heading") {
+	  			console.log("Calling addBin for expanded email");
+	  			addBin(addedNodeJq.find("ul")[0]);
 	  		}
 	  	};
 	  });    
@@ -86,3 +87,44 @@ for(idx in targets) {
 	// pass in the target node, as well as the observer options
 	observer.observe(target, config);
 }
+
+
+//var trash = container.find('div div li[data-jsaction="global.trash"]').clone()
+//var trash_icon = $(trash.find("div img"))
+
+var targets = $(".scroll-list-item").get();
+for(idx in targets) {
+	target = targets[idx];
+	addObserverToListItem(target);
+}
+
+var targets = $(".scroll-list-section-body").get();
+for(idx in targets) {
+	target = targets[idx];
+
+	// From: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+	// create an observer instance
+	var observer = new MutationObserver(function(mutations) {
+	  mutations.forEach(function(mutation) {
+	  	for (var i = 0; i < mutation.addedNodes.length; i++) {
+	  		var addedNode = mutation.addedNodes[i];
+	  		console.log("Processing:");
+	  		console.log(addedNode);
+	  		console.log(addedNode.tagName);
+	  		console.log(addedNode.className);
+
+	  		if (addedNode.tagName == "DIV" && addedNode.className.indexOf("scroll-list-item") >= 0) {
+	  			console.log("Adding an observer to the newly added reminder/email");
+	  			addObserverToListItem(addedNode);
+	  		}
+	  	};
+	  });    
+	});
+	 
+	// configuration of the observer:
+	var config = { attributes: false, childList: true, characterData: false, subtree: false };
+	 
+	// pass in the target node, as well as the observer options
+	observer.observe(target, config);
+}
+
