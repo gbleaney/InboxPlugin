@@ -4,33 +4,33 @@ include("https://gist.githubusercontent.com/jabney/d9d5c13ad7f871ddf03f/raw/99b1
 var addBin = function(ul) {
 
 	console.debug("Creating UL jQuery object");
-	ul = $(ul)
+	ul = $(ul);
+	console.debug(ul);
 
 	console.debug("Finding pin and done objects");
-	var pin = $(ul.find("li[class~=action]")[0])
-	var done = $(ul.find("li[class~=action]")[2])
+	var pin = $(ul.find("li[class~=action]")[0]);
+	console.debug(pin);
+
+	var done = $(ul.find("li[class~=action]")[2]);
+	console.debug(done);
 
 
-	console.debug("Creating bin object");
-	var bin = $(done.clone())
-
-
-	console.debug("Finding list containing action items");
-	var action_list = $(first.parentNode)
-
+	console.debug("Creating bin object from done object");
+	var bin = $(done.clone());
 
 	console.debug("Computing common classes to put on bin");
-	var pin_classes = pin.attr("class")
-	var done_classes = done.attr("class")
-	var bin_classes = setOps.intersection(done_classes.split(" "),pin_classes.split(" "))
+	var pin_classes = pin.attr("class");
+	var done_classes = done.attr("class");
+	var bin_classes = setOps.intersection(done_classes.split(" "),pin_classes.split(" "));
 
+
+	// Morph our copy of the done icon to look like the bin icon
+	console.debug("Augmenting bin classes");
+	bin_classes = bin_classes.join(" ");
+	bin_classes += " itemIconTrash";
 
 	console.debug("Augmenting bin classes");
-	bin_classes = bin_classes.join(" ")
-	bin_classes += " itemIconTrash"
-
-	console.debug("Augmenting bin classes");
-	bin.attr("class", bin_classes)
+	bin.attr("class", bin_classes);
 
 	console.debug("Updating bin action to trash");
 	bin.attr("jsaction", "click:global.trash");
@@ -38,10 +38,23 @@ var addBin = function(ul) {
 	console.debug("Adding (possibly invalid) 'jsinstance'");
 	bin.attr("jsinstance", "4");
 
-	// TODO: update image list
+
+	console.debug("Finding done icon to change to bin");
+	var icon = $(bin.children("img")[0]);
+	console.debug(icon)
+
+	console.debug("Modifying icon attributes to look like bin");
+	icon.attr("alt", "Move to the Bin");
+	icon.attr("srcset", icon.attr("srcset").replace("done", "trash").replace("_r4_", "_r1_"));
+	icon.attr("src", icon.attr("src").replace("done","trash").replace("_r4", "_r1"));
+
 
 	console.debug("Adding bin icon to action list");
-	action_list.append(bin)
+	done.after(bin);
+
+	console.debug("Final Product:");
+	var action_list = pin.parent();
+	console.debug(action_list.get());
 }
 
 
@@ -50,7 +63,7 @@ var addBin = function(ul) {
 
 var targets = $(".scroll-list-item").get();
 for(idx in targets) {
-	target = targets[idx]
+	target = targets[idx];
 	// From: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
 	// create an observer instance
 	var observer = new MutationObserver(function(mutations) {
@@ -61,7 +74,7 @@ for(idx in targets) {
 	  		console.log(addedNode);
 	  		if (addedNode.tagName == "UL") {
 	  			console.log("Calling addBin");
-	  			addBin(addedNode)
+	  			addBin(addedNode);
 	  		}
 	  	};
 	  });    
@@ -73,9 +86,3 @@ for(idx in targets) {
 	// pass in the target node, as well as the observer options
 	observer.observe(target, config);
 }
-
- 
-
- 
-// later, you can stop observing
-observer.disconnect();
