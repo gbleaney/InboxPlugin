@@ -6,22 +6,41 @@ var addBin = function(ul) {
 	console.debug("Creating UL jQuery object");
 	ul = $(ul)
 
+	console.debug("Finding pin and done objects");
 	var pin = $(ul.find("li[class~=action]")[0])
 	var done = $(ul.find("li[class~=action]")[2])
+
+
+	console.debug("Creating bin object");
 	var bin = $(done.clone())
 
-	var action_list = $(first.parentNode)
-	var container = $(first.parentNode.parentNode)
 
+	console.debug("Finding list containing action items");
+	var action_list = $(first.parentNode)
+
+
+	console.debug("Computing common classes to put on bin");
 	var pin_classes = pin.attr("class")
 	var done_classes = done.attr("class")
 	var bin_classes = setOps.intersection(done_classes.split(" "),pin_classes.split(" "))
 
+
+	console.debug("Augmenting bin classes");
 	bin_classes = bin_classes.join(" ")
 	bin_classes += " itemIconTrash"
 
+	console.debug("Augmenting bin classes");
 	bin.attr("class", bin_classes)
 
+	console.debug("Updating bin action to trash");
+	bin.attr("jsaction", "click:global.trash");
+
+	console.debug("Adding (possibly invalid) 'jsinstance'");
+	bin.attr("jsinstance", "4");
+
+	// TODO: update image list
+
+	console.debug("Adding bin icon to action list");
 	action_list.append(bin)
 }
 
