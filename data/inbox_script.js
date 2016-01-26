@@ -60,9 +60,19 @@ var addBin = function(ul) {
 	console.debug(action_list.get());
 }
 
+var observed = new Set()
+
 var addObserverToListItem = function(target) {
 	// From: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
 	// create an observer instance
+	if(observed.has(target)) {
+	  	console.log("Attempting to re-observe an element, exiting");
+		return;
+	} else {
+	  	console.log("Observing an element for the first time, adding to set");
+		observed.add(target);
+	}
+
 	var observer = new MutationObserver(function(mutations) {
 	  mutations.forEach(function(mutation) {
 	  	for (var i = 0; i < mutation.addedNodes.length; i++) {
